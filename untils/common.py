@@ -67,10 +67,10 @@ def save_pic(img_url, item_id):
         return filename
     except IOError as e:
         print(e)
-        return
+        return "IOError"
     except Exception as e:
         print(e)
-        return
+        return "Error"
 
 def del_pic(filename):
     os.remove(filename)

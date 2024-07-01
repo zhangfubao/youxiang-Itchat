@@ -330,7 +330,7 @@ def is_white_group(uuid) -> bool:
 
     for auid in auto_uuids:
         chatrooms = itchat.search_chatrooms(name=auid)
-        print(f'''room: {chatrooms}''')
+        # print(f'''room: {chatrooms}''')
         for chat in chatrooms:
             if chat.UserName == str(uuid):
                 return True
