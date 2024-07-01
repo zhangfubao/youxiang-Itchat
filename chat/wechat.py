@@ -26,6 +26,7 @@ __all__ = ['run', 'delete_cache']
 
 group_infos_dict = OrderedDict()  # 群信息字典
 
+
 def run():
     """ 主运行入口 """
     conf = config.init()
@@ -116,8 +117,8 @@ def init_data():
 
     print('初始化完成，开始正常工作。')
 
-def init_chatsroom(group_name_list):
 
+def init_chatsroom(group_name_list):
     uidlist_compile = re.compile(
         r"(?<!'Self': )\<ChatroomMember:.*?'UserName': '(.*?)', 'NickName'.*?")  # 筛选出群所有用户的 uid
     for group_name in group_name_list:
@@ -136,6 +137,7 @@ def init_chatsroom(group_name_list):
                 group_info['member_uid_list'] = member_uid_list
             group_infos_dict[group_uuid] = group_info
 
+
 def init_alarm():
     """
     初始化定时任务
@@ -144,20 +146,24 @@ def init_alarm():
     # 定时任务
     job_tasks()
 
+
 @itchat.msg_register([TEXT])
 def text_reply(msg):
     """ 监听用户消息，用于自动回复 """
     handle_friends_message(msg)
+
 
 @itchat.msg_register([PICTURE], isGroupChat=True)
 def picture_register(msg):
     """ 监听群消息发来的图片消息 """
     handle_group_pictures(msg)
 
+
 @itchat.msg_register([TEXT], isGroupChat=True)
 def text_group(msg):
     """ 监听群消息，用于自动回复 """
     handle_groups_message(msg)
+
 
 @itchat.msg_register(FRIENDS)
 def add_friends_msg(msg):
@@ -193,6 +199,7 @@ def add_friends_msg(msg):
     else:
         note = '添加好友失败：用户「{}」 发来的验证消息「{}」。'.format(nickname, content)
         set_system_notice(note)
+
 
 @itchat.msg_register([NOTE], isGroupChat=True)
 def group_note_msg(msg):
@@ -242,9 +249,11 @@ def group_note_msg(msg):
             itchat.send(note_invite_welcome, group_uuid)  # 向群里发送欢迎语句
             return
 
+
 def exit_msg():
     """ 退出通知 """
     print('程序已退出')
+
 
 if __name__ == '__main__':
     run()

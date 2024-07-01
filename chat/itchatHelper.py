@@ -318,6 +318,7 @@ def log_all_config():
 
     print('=' * 80)
 
+
 #  判断传入的uuid，是否属于我们的群
 def is_white_group(uuid) -> bool:
     '''

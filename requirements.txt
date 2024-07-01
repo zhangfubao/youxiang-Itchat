@@ -7,6 +7,6 @@ pandas
 pyzbar==0.1.8
 Pillow==8.3.2
 suning-sdk==1.0.0
-
+PyMySQL
 PyYAML~=6.0.1
 requests~=2.32.3

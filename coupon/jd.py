@@ -20,7 +20,9 @@ from untils.common import save_pic, del_pic
 import itchat
 from chat.itchatHelper import set_system_notice
 
-def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key:str, site_id:str, suo_mi_token:str):
+
+def jingfen_query(group_name: str, group_material_id: str, app_key: str, secret_key: str, site_id: str,
+                  suo_mi_token: str):
     ''' 方法效率不咋地，不管了
     https://union.jd.com/openplatform/api/10421
     :return:
@@ -46,11 +48,11 @@ def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key
     # pprint.pprint(json.loads(resp.json()['jd_union_open_goods_jingfen_query_response']['result']))
     for data in json.loads(resp.json()['jd_union_open_goods_jingfen_query_response']['result'])['data']:
         print(data)
-        sku_name = data['skuName']   ## 商品全名
-        sku_id = data['skuId']     ## 商品 sku
-        material_url = f'''http://{(data['materialUrl'])}''' ## 商品url
+        sku_name = data['skuName']  ## 商品全名
+        sku_id = data['skuId']  ## 商品 sku
+        material_url = f'''http://{(data['materialUrl'])}'''  ## 商品url
 
-        couponInfos = data['couponInfo'] ## 优惠券列表
+        couponInfos = data['couponInfo']  ## 优惠券列表
         # 查找最优优惠券
         coupon_link = ""
         discount = 0
@@ -67,26 +69,26 @@ def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key
                 discount = couponInfo['discount']  ## 优惠券额度
                 coupon_link = couponInfo['link']  ## 优惠券领取地址
                 is_coupon = True
-                
-        if is_coupon: # 如果有券
+
+        if is_coupon:  # 如果有券
             if lowest_price_type == 3:  # 秒杀
-                price = data['seckillInfo']['seckillOriPrice'] # 原价
-                lowest_price = data['priceInfo']['lowestCouponPrice'] # 秒杀价
+                price = data['seckillInfo']['seckillOriPrice']  # 原价
+                lowest_price = data['priceInfo']['lowestCouponPrice']  # 秒杀价
                 duanzhi = tb_share_text(app_key, secret_key, material_url, coupon_link, site_id, suo_mi_token)
                 share_text = f'''【秒杀】{sku_name}\n——————————\n  【原价】¥{price}\n 【券后秒杀价】¥{lowest_price}\n抢购地址：{duanzhi}'''
-            elif lowest_price_type == 2: # 拼购
+            elif lowest_price_type == 2:  # 拼购
                 price = data['priceInfo']['price']  # 原价
                 lowest_price = data['priceInfo']['lowestCouponPrice']  # 用券拼购
                 duanzhi = tb_share_text(app_key, secret_key, material_url, coupon_link, site_id, suo_mi_token)
                 share_text = f'''【拼购】{sku_name}\n——————————\n  【原价】¥{price}\n 【券后拼购价】¥{lowest_price}\n抢购地址：{duanzhi}'''
             else:
-                price = data['priceInfo']['price'] ## 商品价格
+                price = data['priceInfo']['price']  ## 商品价格
                 lowest_price = data['priceInfo']['lowestCouponPrice']
                 duanzhi = tb_share_text(app_key, secret_key, material_url, coupon_link, site_id, suo_mi_token)
                 share_text = f'''【京东】{sku_name}\n——————————\n  【爆款价】¥{price}\n 【用卷价】¥{lowest_price}\n抢购地址：{duanzhi}'''
 
 
-        else: ## 如果没有券
+        else:  ## 如果没有券
             if lowest_price_type == 3:  # 秒杀
                 price = data['seckillInfo']['seckillOriPrice']  # 原价
                 lowest_price = data['seckillInfo']['seckillPrice']  # 秒杀价
@@ -109,7 +111,7 @@ def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key
         images_count = 0
         for image in data['imageInfo']['imageList']:
             images_count += 1
-            if images_count > 3: ## 3个以上图片就不发了
+            if images_count > 3:  ## 3个以上图片就不发了
                 pass
             else:
                 image_url = image['url']
@@ -117,7 +119,7 @@ def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key
                 groups = itchat.search_chatrooms(name=f'''{group_name}''')
                 for room in groups:
                     room_name = room['UserName']
-                    time.sleep(random.randint(5,10))
+                    time.sleep(random.randint(5, 10))
                     itchat.send('@img@%s' % (f'''{filename}'''), room_name)
                 del_pic(filename)
                 # print(image_url)
@@ -127,6 +129,7 @@ def jingfen_query(group_name:str, group_material_id:str, app_key:str, secret_key
             room_name = room['UserName']
             time.sleep(random.randint(3, 5))
             itchat.send(share_text, room_name)
+
 
 def tb_share_text(app_key, secret_key, material_url, coupon_url, site_id, suo_mi_token):
     '''
@@ -146,18 +149,18 @@ def tb_share_text(app_key, secret_key, material_url, coupon_url, site_id, suo_mi
     if coupon_url == "":
         resp = client.call("jd.union.open.promotion.common.get",
                            {"promotionCodeReq":
-                                {
-                                 "siteId": site_id,
-                                 "materialId": material_url
-                                 }})
+                               {
+                                   "siteId": site_id,
+                                   "materialId": material_url
+                               }})
     else:
         resp = client.call("jd.union.open.promotion.common.get",
                            {"promotionCodeReq":
-                                {
-                                 "siteId": site_id,
-                                 "materialId": material_url,
-                                 "couponUrl": coupon_url
-                                 }})
+                               {
+                                   "siteId": site_id,
+                                   "materialId": material_url,
+                                   "couponUrl": coupon_url
+                               }})
     try:
         x = json.loads(resp.json()['jd_union_open_promotion_common_get_response']['result'])['data']['clickURL']
     except Exception as e:
@@ -167,6 +170,7 @@ def tb_share_text(app_key, secret_key, material_url, coupon_url, site_id, suo_mi
     url = x
     c = Suo_mi(app_key=suo_mi_token).get_short_url(url)
     return c
+
 
 if __name__ == '__main__':
     pass

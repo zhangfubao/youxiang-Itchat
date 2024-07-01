@@ -5,6 +5,7 @@ import random
 from untils.common import save_pic, del_pic
 from untils.tb_top_api import TbApiClient
 
+
 def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone_id):
     '''
 
@@ -14,7 +15,7 @@ def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone
     '''
     try:
         material_id = str(random.choices(material_id.split(','))[0])
-        #print("material_id===", material_id)
+        # print("material_id===", material_id)
         # print("group_name.f===", f'''{group_name}''')
         # print("group_name===", group_name)
         groups = itchat.search_chatrooms(name=f'''{group_name}''')
@@ -29,7 +30,7 @@ def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone
             time.sleep(random.randint(1, 5))
             tb_client = TbApiClient(app_key=app_key, secret_key=app_secret, adzone_id=adzone_id)
             # print("tb_client===", tb_client)
-            #res = tb_client.taobao_tbk_dg_optimus_material(material_id)
+            # res = tb_client.taobao_tbk_dg_optimus_material(material_id)
             res = tb_client.taobao_tbk_dg_material_recommend(material_id)
             # res = res.replace("\n", "")
             # print("res===", res)
@@ -52,8 +53,6 @@ def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone
                 pict_url = "https:" + str(basicInfo['pict_url'])
                 item_id = item['item_id']
                 filename = save_pic(pict_url, item_id)
-                if filename:
-                    time.sleep(3)
 
                 if str(item).find("coupon_share_url") > -1:
                     share_url = "https:" + publishInfo['coupon_share_url']
@@ -88,7 +87,7 @@ def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone
                 time.sleep(2)
 
                 start_index = text.find('￥')
-                #itchat.send(f'''({text[start_index: 13+start_index]})''', group_uuid)
+                # itchat.send(f'''({text[start_index: 13+start_index]})''', group_uuid)
                 text1 = text.replace(title, "")
                 # print('text1===', text1)
                 itchat.send(f'''{send_msg}\n(奍码：{text1})\n复制打开氵匋寶app''', group_uuid)

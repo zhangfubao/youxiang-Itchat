@@ -7,6 +7,7 @@ import os
 import copy as mycopy
 import yaml
 
+
 def init():
     """
     将 yaml 里的配置文件导入到 config.py 中
@@ -17,6 +18,7 @@ def init():
     if opts:
         return True
     return False
+
 
 def get_yaml():
     """
@@ -38,17 +40,21 @@ def set(key, value):
     """ 通过 key 设置某一项值 """
     opts[key] = value
 
+
 def get(key, default=None):
     """ 通过 key 获取值 """
     return opts.get(key, default)
+
 
 def copy():
     """ 复制配置 """
     return mycopy.deepcopy(opts)
 
+
 def update(new_opts):
     """ 全部替换配置 """
     opts.update(new_opts)
+
 
 if __name__ == '__main__':
     # init()

@@ -5,6 +5,7 @@
 import pyzbar.pyzbar as pyzbar
 from PIL import Image
 
+
 def QRcode_detection(image: str) -> bool:
     '''
     判断图片是否存在二维码

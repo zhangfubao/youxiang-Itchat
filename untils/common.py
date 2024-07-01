@@ -17,6 +17,7 @@ __all__ = [
 FILEHELPER_MARK = ['文件传输助手', 'filehelper']  # 文件传输助手标识
 FILEHELPER = 'filehelper'
 
+
 def is_json(resp):
     """
     判断数据是否能被 Json 化。 True 能，False 否。
@@ -30,6 +31,7 @@ def is_json(resp):
         return False
     return False
 
+
 def md5_encode(text):
     """ 把數據 md5 化 """
     if not isinstance(text, str):
@@ -39,6 +41,7 @@ def md5_encode(text):
     encodedStr = md5.hexdigest().upper()
     return encodedStr
 
+
 def _progress(block_num, block_size, total_size):
     '''回调函数
        @block_num: 已经下载的数据块
@@ -46,8 +49,9 @@ def _progress(block_num, block_size, total_size):
        @total_size: 远程文件的大小
     '''
     sys.stdout.write('\r>> Downloading file %.1f%%' % (
-                     float(block_num * block_size) / float(total_size) * 100.0))
+            float(block_num * block_size) / float(total_size) * 100.0))
     sys.stdout.flush()
+
 
 def save_pic(img_url, item_id):
     '''
@@ -62,7 +66,19 @@ def save_pic(img_url, item_id):
         filename = f'''tb_{datetime.datetime.now().strftime("%y%m%d-%H%M%S")}_{item_id}{file_suffix}'''
         # print(filename)
         # 下载图片，并保存到文件夹中
-        urllib.request.urlretrieve(img_url, filename=filename)
+        header = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) \
+            AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/35.0.1916.114 Safari/537.36',
+            'Cookie': 'AspxAutoDetectCookieSupport=1'
+        }
+        path = "D:/Fabo/Desktop/123.jpg"
+        request = urllib.request.Request(img_url, None, header)
+        response = urllib.request.urlopen(request)
+        with open(filename, "wb") as f:
+            f.write(response.read())
+
+        # urllib.request.urlretrieve(img_url, filename=filename)
         print(f'''图片下载成功：{filename}''')
         return filename
     except IOError as e:
@@ -72,8 +88,10 @@ def save_pic(img_url, item_id):
         print(e)
         return "Error"
 
+
 def del_pic(filename):
     os.remove(filename)
+
 
 def short_2_long(short_url: str) -> str:
     '''
@@ -86,6 +104,7 @@ def short_2_long(short_url: str) -> str:
     response = urllib.request.urlopen(req)
     dlurl = response.geturl()  # 跳转后的真实下载链接
     return dlurl
+
 
 if __name__ == '__main__':
     print(md5_encode('aeryou'))
