@@ -12,6 +12,7 @@ def job_tasks():
     scheduler = BackgroundScheduler(timezone="Asia/Shanghai")
 
     tb_job_tasks(scheduler)
+    ym_job_tasks(scheduler)
     jd_job_task(scheduler)
     pdd_job_task(scheduler)
     sn_job_task(scheduler)
@@ -42,7 +43,10 @@ def tb_job_tasks(scheduler):
                                   'material_id': chat_group['group_material_id'],
                                   'app_key': app_key, 'app_secret': app_secret, 'adzone_id': adzone_id},
                           trigger='cron', hour=f'''{chat_group['hour']}''', minute=f'''{chat_group['minute']}''',
-                          second=0, jitter=300, id=f'''{chat_group['group_name']}''')
+                          second=0, jitter=300, id=f'''{chat_group['group_name']}tb''')
+
+def ym_job_tasks(scheduler):
+    conf = config.get_yaml()
 
 
 def jd_job_task(scheduler):
@@ -69,7 +73,7 @@ def jd_job_task(scheduler):
                                   'app_key': app_key, 'secret_key': app_secret, 'site_id': site_id,
                                   'suo_mi_token': suo_im},
                           trigger='cron', hour=f'''{chat_group['hour']}''', minute=f'''{chat_group['minute']}''',
-                          second=0, jitter=300, id=f'''{chat_group['group_name']}''')
+                          second=0, jitter=300, id=f'''{chat_group['group_name']}jd''')
 
 
 def pdd_job_task(scheduler):
@@ -84,6 +88,8 @@ def pdd_job_task(scheduler):
     app_key = conf.get('app_key')
     app_secret = conf.get('app_secret')
     p_id = conf.get('p_id')
+    access_token = conf.get('access_token')
+    refresh_token = conf.get('refresh_token')
 
     chat_groups = conf.get('chat_groups')
     for chat_group in chat_groups:
@@ -91,9 +97,10 @@ def pdd_job_task(scheduler):
         scheduler.add_job(func=pdd_share_text,
                           kwargs={'group_name': chat_group['group_name'],
                                   'group_material_id': chat_group['group_material_id'],
-                                  'app_key': app_key, 'secret_key': app_secret, 'p_id': p_id},
+                                  'app_key': app_key, 'secret_key': app_secret, 'p_id': p_id,
+                                  'access_token': access_token, 'refresh_token':refresh_token},
                           trigger='cron', hour=f'''{chat_group['hour']}''', minute=f'''{chat_group['minute']}''',
-                          second=0, jitter=0, id=f'''{chat_group['group_name']}''')
+                          second=0, jitter=0, id=f'''{chat_group['group_name']}pdd''')
 
 
 def sn_job_task(scheduler):
@@ -117,7 +124,7 @@ def sn_job_task(scheduler):
                                   'group_material_id': chat_group['group_material_id'],
                                   'app_key': app_key, 'secret_key': app_secret, 'ad_book_id': ad_book_id},
                           trigger='cron', hour=f'''{chat_group['hour']}''', minute=f'''{chat_group['minute']}''',
-                          second=0, jitter=0, id=f'''{chat_group['group_name']}''')
+                          second=0, jitter=0, id=f'''{chat_group['group_name']}sn''')
 
 
 def scheduler_listener(event):

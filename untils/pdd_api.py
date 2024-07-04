@@ -6,9 +6,11 @@ PDD_API_ROOT = 'https://gw-api.pinduoduo.com/api/router'
 
 
 class PddApiClient(object):
-    def __init__(self, app_key, secret_key):
+    def __init__(self, app_key, secret_key, access_token, refresh_token):
         self.app_key = app_key
         self.secret_key = secret_key
+        self.access_token = access_token
+        self.refresh_token = refresh_token
 
     def get_sign(self, params):
         params_list = sorted(list(params.items()), key=lambda x: x[0])
@@ -22,6 +24,7 @@ class PddApiClient(object):
             "type": method,
             "data_type": "JSON",
             "client_id": self.app_key,
+            "access_token": self.access_token,
             "timestamp": int(time.time()),
         }
         if isinstance(param_json, (dict, list)):
@@ -29,7 +32,7 @@ class PddApiClient(object):
                 params[key] = param_json[key]
         params['sign'] = self.get_sign(params)
         resp = requests.get(PDD_API_ROOT, params=params, **kwargs)
-        print(resp.url)
+        print('resp.url===', resp.url)
         return resp
 
 

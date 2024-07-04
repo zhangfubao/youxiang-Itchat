@@ -7,29 +7,32 @@ from untils.pdd_api import PddApiClient
 from chat.itchatHelper import set_system_notice
 
 
-def pdd_share_text(group_name: str, group_material_id: str, app_key: str, secret_key: str, p_id: str):
+def pdd_share_text(group_name: str, group_material_id: str, app_key: str, secret_key: str, p_id: str, access_token: str,
+                   refresh_token: str):
     '''
     :param group_name:
     :param material_id:
     :return:
     '''
     try:
-        offset = str(random.randint(1, 295))  # top.goods.list.query 好像只有300个商品
-        limit = str(random.randint(3, 5))  #
+        offset = str(random.randint(0, 200))  # top.goods.list.query 好像只有300个商品
+        limit = "1"  #
 
-        client = PddApiClient(app_key=app_key, secret_key=secret_key)
-        resp = client.call("pdd.ddk.top.goods.list.query",
+        client = PddApiClient(app_key=app_key, secret_key=secret_key, access_token=access_token,
+                              refresh_token=refresh_token)
+        resp = client.call("pdd.ddk.goods.recommend.get",
                            {"offset": offset,
                             "limit": limit,
                             "p_id": p_id
                             })
+        # print("type:pdd.ddk.goods.recommend.get come in===")
     except Exception as e:
         print(e)
         set_system_notice(f'''offset: {offset},\nlimit:{limit}\n\n发现问题''')
         pdd_share_text(group_name, group_material_id, app_key, secret_key, secret_key, p_id)
 
-    for data in json.loads(resp.text)['top_goods_list_get_response']['list']:
-        goods_id = data['goods_id']
+    for data in json.loads(resp.text)['goods_basic_detail_response']['list']:
+        goods_sign = data['goods_sign']
         goods_name = data['goods_name']
         search_id = data['search_id']
         goods_thumbnail_url = data['goods_thumbnail_url']
@@ -47,13 +50,14 @@ def pdd_share_text(group_name: str, group_material_id: str, app_key: str, secret
                                                                                                           + str(
             cal_price - coupon_discount)[len(str(cal_price - coupon_discount)) - 2:]
         short_url = promotion_url_generate(app_key=app_key, secret_key=secret_key, p_id=p_id,
-                                           goods_id_list=int(goods_id), search_id=search_id)
+                                           goods_sign=goods_sign, search_id=search_id,
+                                           access_token=access_token, refresh_token=refresh_token)
 
         groups = itchat.search_chatrooms(name=f'''{group_name}''')
         for room in groups:
             room_name = room['UserName']
             time.sleep(random.randint(1, 5))
-            filename = save_pic(goods_thumbnail_url, goods_id)
+            filename = save_pic(goods_thumbnail_url, goods_sign)
             # 发送图片
             itchat.send('@img@%s' % (f'''{filename}'''), room_name)
             time.sleep(random.randint(1, 3))
@@ -63,18 +67,22 @@ def pdd_share_text(group_name: str, group_material_id: str, app_key: str, secret
             del_pic(filename)
 
 
-def promotion_url_generate(app_key: str, secret_key: str, p_id: str, goods_id_list: int, search_id: str):
-    client = PddApiClient(app_key=app_key, secret_key=secret_key)
+def promotion_url_generate(app_key: str, secret_key: str, p_id: str, goods_sign: str, search_id: str,
+                           access_token: str, refresh_token: str):
+    client = PddApiClient(app_key=app_key, secret_key=secret_key, access_token=access_token,
+                          refresh_token=refresh_token)
     resp = client.call("pdd.ddk.goods.promotion.url.generate",
-                       {"goods_id_list": f'''[{goods_id_list}]''',
+                       {"goods_sign": f'''{goods_sign}''',
                         "search_id": search_id,
                         "p_id": p_id
                         })
+    # print("type:pdd.ddk.goods.promotion.url.generate come in===")
+    # print("resp===", str(resp.text))
     try:
         short_url = json.loads(resp.text)['goods_promotion_url_generate_response']['goods_promotion_url_list'][0][
             'mobile_short_url']
     except Exception as e:
         print(e)
-        set_system_notice(f'''goods_id_list: {goods_id_list},\nsearch_id:{search_id}\np_id:{p_id}\n\n无法获取连接''')
+        set_system_notice(f'''goods_sign: {goods_sign},\nsearch_id:{search_id}\np_id:{p_id}\n\n无法获取连接''')
         short_url = ""
     return short_url
