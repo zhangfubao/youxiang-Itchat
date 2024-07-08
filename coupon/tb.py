@@ -90,7 +90,7 @@ def tb_share_text(group_name: str, material_id: str, app_key, app_secret, adzone
                 # itchat.send(f'''({text[start_index: 13+start_index]})''', group_uuid)
                 text1 = text.replace(title, "")
                 # print('text1===', text1)
-                itchat.send(f'''{send_msg}\n(奍码：{text1})\n复制打开氵匋寶app''', group_uuid)
+                itchat.send(f'''{send_msg}\n-----------------\n(奍码：{text1})\n腹制整段去🍑掏寳''', group_uuid)
                 time.sleep(2)
                 del_pic(filename)
     except Exception as e:
